@@ -10,26 +10,26 @@ require (
 	github.com/Azure/go-autorest/autorest/to v0.4.0
 	github.com/Azure/go-autorest/autorest/validation v0.1.0 // indirect
 	github.com/dnaeon/go-vcr v1.1.0 // indirect
-	github.com/evanphx/json-patch v4.11.0+incompatible
+	github.com/evanphx/json-patch v4.12.0+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.15.0
 	github.com/rubiojr/go-vhd v0.0.0-20200706105327-02e210299021
-	github.com/spf13/cobra v1.2.1
+	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
-	k8s.io/api v0.22.1
-	k8s.io/apimachinery v0.22.1
-	k8s.io/apiserver v0.22.1
-	k8s.io/client-go v0.22.1
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
+	k8s.io/api v0.24.0
+	k8s.io/apimachinery v0.24.0
+	k8s.io/apiserver v0.24.0
+	k8s.io/client-go v0.24.0
 	k8s.io/cloud-provider v0.22.1
-	k8s.io/component-base v0.22.1
+	k8s.io/component-base v0.24.0
 	k8s.io/controller-manager v0.22.1
-	k8s.io/klog/v2 v2.10.0
-	k8s.io/utils v0.0.0-20210707171843-4b05e18ac7d9
+	k8s.io/klog/v2 v2.60.1
+	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9
 	sigs.k8s.io/yaml v1.2.0
 )
