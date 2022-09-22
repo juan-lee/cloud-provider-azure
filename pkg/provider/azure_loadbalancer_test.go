@@ -38,6 +38,7 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	// utilerrors "k8s.io/apimachinery/pkg/util/errors"
 
 	"sigs.k8s.io/cloud-provider-azure/pkg/azureclients/loadbalancerclient/mockloadbalancerclient"
 	"sigs.k8s.io/cloud-provider-azure/pkg/azureclients/privatelinkserviceclient/mockprivatelinkserviceclient"
@@ -5445,3 +5446,49 @@ func TestGetClusterFromPIPClusterTags(t *testing.T) {
 		assert.Equal(t, actual, c.expected, "TestCase[%d]: %s", i, c.desc)
 	}
 }
+
+// func TestDataRace(t *testing.T) {
+// 	const vmCount = 8
+// 	const availabilitySetCount = 4
+
+// 	ctrl := gomock.NewController(t)
+// 	defer ctrl.Finish()
+// 	az := GetTestCloud(ctrl)
+// 	mockLBBackendPool := az.LoadBalancerBackendPool.(*MockBackendPool)
+// 	mockLBBackendPool.EXPECT().ReconcileBackendPools(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, false, nil).AnyTimes()
+// 	mockLBBackendPool.EXPECT().EnsureHostsInPool(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+// 	mockLBBackendPool.EXPECT().GetBackendPrivateIPs(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, nil).AnyTimes()
+
+// 	clusterResources, expectedInterfaces, expectedVirtualMachines := getClusterResources(az, vmCount, availabilitySetCount)
+// 	setMockEnv(az, ctrl, expectedInterfaces, expectedVirtualMachines, 4)
+
+// 	services := []v1.Service{
+// 		getTestService("service1", v1.ProtocolTCP, nil, false, 80),
+// 		getInternalTestService("service2", 80),
+// 	}
+
+// 	var updateFuncs []func() error
+// 	for n, service := range services {
+// 		if service.Annotations[consts.ServiceAnnotationLoadBalancerInternal] == "true" {
+// 			validateTestSubnet(t, az, &service)
+// 		}
+
+// 		expectedLBs := make([]network.LoadBalancer, 0)
+// 		setMockLBs(az, ctrl, &expectedLBs, "service", 1, n+1, service.Annotations[consts.ServiceAnnotationLoadBalancerInternal] == "true")
+
+// 		if n == 1 {
+// 			updateFuncs = append(updateFuncs, func() error {
+// 				_, err := az.EnsureLoadBalancer(context.TODO(), testClusterName, &service, clusterResources.nodes)
+// 				return err
+// 			})
+// 		} else {
+// 			updateFuncs = append(updateFuncs, func() error {
+// 				err := az.UpdateLoadBalancer(context.TODO(), testClusterName, &service, clusterResources.nodes)
+// 				return err
+// 			})
+// 		}
+// 	}
+
+// 	errs := utilerrors.AggregateGoroutines(updateFuncs...)
+// 	assert.Nil(t, utilerrors.Flatten(errs))
+// }

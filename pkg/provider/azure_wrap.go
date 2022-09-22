@@ -17,6 +17,7 @@ limitations under the License.
 package provider
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -63,6 +64,187 @@ func checkResourceExistsFromError(err *retry.Error) (bool, *retry.Error) {
 	return false, err
 }
 
+// deepCopy uses gob instead of json Marshal/Unmarshal to avoid azure-sdk-for-go's poor custom marshaler implementation.
+func deepCopy(src, dest interface{}) error {
+	b, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	json.Unmarshal(b, dest)
+	return nil
+}
+
+type virtualMachine compute.VirtualMachine
+
+func (vm *virtualMachine) MarshalJSON() ([]byte, error) {
+	result := virtualMachine{
+		Response:                 vm.Response,
+		Plan:                     vm.Plan,
+		VirtualMachineProperties: vm.VirtualMachineProperties,
+		Resources:                vm.Resources,
+		Identity:                 vm.Identity,
+		Zones:                    vm.Zones,
+		ExtendedLocation:         vm.ExtendedLocation,
+		ID:                       vm.ID,
+		Name:                     vm.Name,
+		Type:                     vm.Type,
+		Location:                 vm.Location,
+		Tags:                     vm.Tags,
+	}
+	return json.Marshal(&result)
+}
+
+type virtualMachineProperties compute.VirtualMachineProperties
+
+func (vm *virtualMachineProperties) MarshalJSON() ([]byte, error) {
+	result := virtualMachineProperties{
+		HardwareProfile:         vm.HardwareProfile,
+		StorageProfile:          vm.StorageProfile,
+		AdditionalCapabilities:  vm.AdditionalCapabilities,
+		OsProfile:               vm.OsProfile,
+		NetworkProfile:          vm.NetworkProfile,
+		SecurityProfile:         vm.SecurityProfile,
+		DiagnosticsProfile:      vm.DiagnosticsProfile,
+		AvailabilitySet:         vm.AvailabilitySet,
+		VirtualMachineScaleSet:  vm.VirtualMachineScaleSet,
+		ProximityPlacementGroup: vm.ProximityPlacementGroup,
+		Priority:                vm.Priority,
+		EvictionPolicy:          vm.EvictionPolicy,
+		BillingProfile:          vm.BillingProfile,
+		Host:                    vm.Host,
+		HostGroup:               vm.HostGroup,
+		ProvisioningState:       vm.ProvisioningState,
+		InstanceView:            vm.InstanceView,
+		LicenseType:             vm.LicenseType,
+		VMID:                    vm.VMID,
+		ExtensionsTimeBudget:    vm.ExtensionsTimeBudget,
+		PlatformFaultDomain:     vm.PlatformFaultDomain,
+		ScheduledEventsProfile:  vm.ScheduledEventsProfile,
+		UserData:                vm.UserData,
+		CapacityReservation:     vm.CapacityReservation,
+		ApplicationProfile:      vm.ApplicationProfile,
+	}
+	return json.Marshal(&result)
+}
+
+type routeTable network.RouteTable
+
+func (rt *routeTable) MarshalJSON() ([]byte, error) {
+	result := routeTable{
+		Response:                   rt.Response,
+		RouteTablePropertiesFormat: rt.RouteTablePropertiesFormat,
+		Etag:                       rt.Etag,
+		ID:                         rt.ID,
+		Name:                       rt.Name,
+		Type:                       rt.Type,
+		Location:                   rt.Location,
+		Tags:                       rt.Tags,
+	}
+	return json.Marshal(&result)
+}
+
+type publicIPAddress network.PublicIPAddress
+
+func (pip *publicIPAddress) MarshalJSON() ([]byte, error) {
+	result := publicIPAddress{
+		Response:                        pip.Response,
+		ExtendedLocation:                pip.ExtendedLocation,
+		Sku:                             pip.Sku,
+		PublicIPAddressPropertiesFormat: pip.PublicIPAddressPropertiesFormat,
+		Etag:                            pip.Etag,
+		Zones:                           pip.Zones,
+		ID:                              pip.ID,
+		Name:                            pip.Name,
+		Type:                            pip.Type,
+		Location:                        pip.Location,
+		Tags:                            pip.Tags,
+	}
+	return json.Marshal(&result)
+}
+
+type loadBalancer network.LoadBalancer
+
+func (lb *loadBalancer) MarshalJSON() ([]byte, error) {
+	result := loadBalancer{
+		Response:                     lb.Response,
+		ExtendedLocation:             lb.ExtendedLocation,
+		Sku:                          lb.Sku,
+		LoadBalancerPropertiesFormat: lb.LoadBalancerPropertiesFormat,
+		Etag:                         lb.Etag,
+		ID:                           lb.ID,
+		Name:                         lb.Name,
+		Type:                         lb.Type,
+		Location:                     lb.Location,
+		Tags:                         lb.Tags,
+	}
+	return json.Marshal(&result)
+}
+
+type loadBalancerProperties network.LoadBalancerPropertiesFormat
+
+func (lb *loadBalancerProperties) MarshalJSON() ([]byte, error) {
+	result := loadBalancerProperties{
+		FrontendIPConfigurations: lb.FrontendIPConfigurations,
+		BackendAddressPools:      lb.BackendAddressPools,
+		LoadBalancingRules:       lb.LoadBalancingRules,
+		Probes:                   lb.Probes,
+		InboundNatRules:          lb.InboundNatRules,
+		InboundNatPools:          lb.InboundNatPools,
+		OutboundRules:            lb.OutboundRules,
+		ResourceGUID:             lb.ResourceGUID,
+		ProvisioningState:        lb.ProvisioningState,
+	}
+	return json.Marshal(&result)
+}
+
+type securityGroup network.SecurityGroup
+
+func (sg *securityGroup) MarshalJSON() ([]byte, error) {
+	result := securityGroup{
+		Response:                      sg.Response,
+		SecurityGroupPropertiesFormat: sg.SecurityGroupPropertiesFormat,
+		Etag:                          sg.Etag,
+		ID:                            sg.ID,
+		Name:                          sg.Name,
+		Type:                          sg.Type,
+		Location:                      sg.Location,
+		Tags:                          sg.Tags,
+	}
+	return json.Marshal(&result)
+}
+
+type securityGroupProperties network.SecurityGroupPropertiesFormat
+
+func (sg *securityGroupProperties) MarshalJSON() ([]byte, error) {
+	result := securityGroupProperties{
+		SecurityRules:        sg.SecurityRules,
+		DefaultSecurityRules: sg.DefaultSecurityRules,
+		NetworkInterfaces:    sg.NetworkInterfaces,
+		Subnets:              sg.Subnets,
+		FlowLogs:             sg.FlowLogs,
+		ResourceGUID:         sg.ResourceGUID,
+		ProvisioningState:    sg.ProvisioningState,
+	}
+	return json.Marshal(&result)
+}
+
+type privateLinkService network.PrivateLinkService
+
+func (pls *privateLinkService) MarshalJSON() ([]byte, error) {
+	result := privateLinkService{
+		Response:                     pls.Response,
+		ExtendedLocation:             pls.ExtendedLocation,
+		PrivateLinkServiceProperties: pls.PrivateLinkServiceProperties,
+		Etag:                         pls.Etag,
+		ID:                           pls.ID,
+		Name:                         pls.Name,
+		Type:                         pls.Type,
+		Location:                     pls.Location,
+		Tags:                         pls.Tags,
+	}
+	return json.Marshal(&result)
+}
+
 // getVirtualMachine calls 'VirtualMachinesClient.Get' with a timed cache
 // The service side has throttling control that delays responses if there are multiple requests onto certain vm
 // resource request in short period.
@@ -78,24 +260,40 @@ func (az *Cloud) getVirtualMachine(nodeName types.NodeName, crt azcache.AzureCac
 		return vm, cloudprovider.InstanceNotFound
 	}
 
-	return *(cachedVM.(*compute.VirtualMachine)), nil
+	srcVM := (*virtualMachine)(cachedVM.(*compute.VirtualMachine))
+	err = deepCopy(*srcVM, &vm)
+	if err != nil {
+		return vm, err
+	}
+	if srcVM.VirtualMachineProperties != nil {
+		srcVMProperties := (*virtualMachineProperties)(srcVM.VirtualMachineProperties)
+		err = deepCopy(*srcVMProperties, vm.VirtualMachineProperties)
+		if err != nil {
+			return vm, err
+		}
+	}
+	return vm, nil
 }
 
-func (az *Cloud) getRouteTable(crt azcache.AzureCacheReadType) (routeTable network.RouteTable, exists bool, err error) {
+func (az *Cloud) getRouteTable(crt azcache.AzureCacheReadType) (rt network.RouteTable, exists bool, err error) {
 	if len(az.RouteTableName) == 0 {
-		return routeTable, false, fmt.Errorf("Route table name is not configured")
+		return rt, false, fmt.Errorf("Route table name is not configured")
 	}
 
 	cachedRt, err := az.rtCache.Get(az.RouteTableName, crt)
 	if err != nil {
-		return routeTable, false, err
+		return rt, false, err
 	}
 
 	if cachedRt == nil {
-		return routeTable, false, nil
+		return rt, false, nil
 	}
 
-	return *(cachedRt.(*network.RouteTable)), true, nil
+	err = deepCopy(routeTable(*cachedRt.(*network.RouteTable)), &rt)
+	if err != nil {
+		return rt, false, err
+	}
+	return rt, true, nil
 }
 
 func (az *Cloud) getPIPCacheKey(pipResourceGroup string, pipName string) string {
@@ -118,7 +316,11 @@ func (az *Cloud) getPublicIPAddress(pipResourceGroup string, pipName string, crt
 		return pip, false, nil
 	}
 
-	return *(cachedPIP.(*network.PublicIPAddress)), true, nil
+	err = deepCopy(publicIPAddress(*cachedPIP.(*network.PublicIPAddress)), &pip)
+	if err != nil {
+		return pip, false, err
+	}
+	return pip, true, nil
 }
 
 func (az *Cloud) getSubnet(virtualNetworkName string, subnetName string) (network.Subnet, bool, error) {
@@ -155,7 +357,19 @@ func (az *Cloud) getAzureLoadBalancer(name string, crt azcache.AzureCacheReadTyp
 		return lb, false, nil
 	}
 
-	return *(cachedLB.(*network.LoadBalancer)), true, nil
+	srcLB := (*loadBalancer)(cachedLB.(*network.LoadBalancer))
+	err = deepCopy(*srcLB, &lb)
+	if err != nil {
+		return lb, false, err
+	}
+	if srcLB.LoadBalancerPropertiesFormat != nil {
+		srcLBProperties := (*loadBalancerProperties)(srcLB.LoadBalancerPropertiesFormat)
+		err = deepCopy(*srcLBProperties, lb.LoadBalancerPropertiesFormat)
+		if err != nil {
+			return lb, false, err
+		}
+	}
+	return lb, true, nil
 }
 
 func (az *Cloud) getSecurityGroup(crt azcache.AzureCacheReadType) (network.SecurityGroup, error) {
@@ -164,16 +378,29 @@ func (az *Cloud) getSecurityGroup(crt azcache.AzureCacheReadType) (network.Secur
 		return nsg, fmt.Errorf("securityGroupName is not configured")
 	}
 
-	securityGroup, err := az.nsgCache.Get(az.SecurityGroupName, crt)
+	cachedSG, err := az.nsgCache.Get(az.SecurityGroupName, crt)
 	if err != nil {
 		return nsg, err
 	}
 
-	if securityGroup == nil {
+	if cachedSG == nil {
 		return nsg, fmt.Errorf("nsg %q not found", az.SecurityGroupName)
 	}
 
-	return *(securityGroup.(*network.SecurityGroup)), nil
+	srcSG := (*securityGroup)(cachedSG.(*network.SecurityGroup))
+	err = deepCopy(*srcSG, &nsg)
+	if err != nil {
+		return nsg, err
+	}
+
+	if srcSG.SecurityGroupPropertiesFormat != nil {
+		srcSGProperties := (*securityGroupProperties)(srcSG.SecurityGroupPropertiesFormat)
+		err = deepCopy(*srcSGProperties, nsg.SecurityGroupPropertiesFormat)
+		if err != nil {
+			return nsg, err
+		}
+	}
+	return nsg, nil
 }
 
 func (az *Cloud) getPrivateLinkService(frontendIPConfigID *string, crt azcache.AzureCacheReadType) (pls network.PrivateLinkService, err error) {
@@ -181,7 +408,11 @@ func (az *Cloud) getPrivateLinkService(frontendIPConfigID *string, crt azcache.A
 	if err != nil {
 		return pls, err
 	}
-	return *(cachedPLS.(*network.PrivateLinkService)), nil
+	err = deepCopy(privateLinkService(*cachedPLS.(*network.PrivateLinkService)), &pls)
+	if err != nil {
+		return pls, err
+	}
+	return pls, nil
 }
 
 func (az *Cloud) newVMCache() (*azcache.TimedCache, error) {
